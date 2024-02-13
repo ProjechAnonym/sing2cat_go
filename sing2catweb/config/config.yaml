@@ -1,0 +1,12 @@
+url:
+  - https://link.onesy.link/link/xQ3S0L9btfgTprvs?clash=3
+  - https://sub1.smallstrawberry.com/api/v1/client/subscribe?token=db7210cdd132746b50227ca66fb16ac4
+rule_set:
+  - 规则集标签A:
+      type: local
+      path: /usr/
+      china: true
+  - 规则集标签B:
+      type: remote
+      url: sas
+      china: false
