@@ -7,9 +7,10 @@ import (
 	"sync"
 
 	"github.com/bitly/go-simplejson"
+	"go.uber.org/zap"
 )
 
-func GenerateConfigJson() {
+func GenerateConfigJson(Logger *zap.Logger) {
 	outbound_channel := make(chan *simplejson.Json,50)
 	outbounds := []*simplejson.Json{}
 	var jobs sync.WaitGroup
@@ -22,7 +23,7 @@ func GenerateConfigJson() {
 	// 获取会变化的信息,出站和路由
 	route := MergeRoute()
 	go func(){
-		outbounds := MergeOutbounds()
+		outbounds := MergeOutbounds(Logger)
 		for _,outbound := range(outbounds){
 			outbound_channel <- outbound
 		}

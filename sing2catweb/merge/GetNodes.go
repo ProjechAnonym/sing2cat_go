@@ -3,7 +3,6 @@ package merge
 import (
 	"errors"
 	"regexp"
-	"runtime"
 	initial "sing2catweb/Initial"
 	"sync"
 
@@ -18,10 +17,6 @@ func formatUrl() []interface{}{
 	// 读取配置文件获得url列表
 	config_content := initial.GetValue("config").(*simplejson.Json)
 	urls,_ := config_content.Get("url").Array()
-	if len(urls) == 0{
-		initial.Logger.Error("url获取失败",zap.Error(errors.New("请检查配置文件")))
-		runtime.Goexit()
-	}
 	// 对url进行检查,如果没用clash标签则补上
 	for index,url := range(urls){
 		// 创建正则匹配器,根据?或者&切割
@@ -48,13 +43,16 @@ func formatUrl() []interface{}{
 	return urls
 }
 
-func getNodes() []*simplejson.Json{
+func getNodes(Logger *zap.Logger) []*simplejson.Json{
 	// 创建异步锁,避免设置地区tag时序号混乱
 	var lock sync.RWMutex
 	// 最终返回的节点切片
 	nodes := []*simplejson.Json{}
 	// 获取整理后的urls
 	urls := formatUrl()
+	if len(urls) == 0{
+		return nodes
+	}
 	// nodes_num会接受每个异步函数获取到的节点数,缓存默认为url的个数,避免阻塞
 	nodes_num := make(chan int,len(urls))
 	// channel用于接收每个节点的具体信息
@@ -84,7 +82,7 @@ func getNodes() []*simplejson.Json{
 		// yaml解析后的结果放入content中
 		err := yaml.Unmarshal(r.Body,&content)
 		if err != nil{
-			initial.Logger.Error("节点yaml解析失败",zap.Error((err)))
+			Logger.Error("节点yaml解析失败",zap.Error((err)))
 		}
 		// temp_nodes是yaml状态的节点信息,之后会遍历送入处理函数返回json形式的
 		temp_nodes := content["proxies"].([]interface{})
@@ -98,7 +96,7 @@ func getNodes() []*simplejson.Json{
 	// 得到错误的回调函数
 	c.OnError(func(r *colly.Response, err error) {
 		if err != nil{
-			initial.Logger.Error("获取节点配置文件失败",zap.Error((err)))
+			Logger.Error("获取节点配置文件失败",zap.Error((err)))
 		}
 		// 失败则没有节点信息
 		nodes_num <- 0
@@ -127,7 +125,7 @@ func getNodes() []*simplejson.Json{
 				// 如果节点数量是0,则没有意义往下进行,直接panic了
 				if nodes_num_count == 0{
 					err := errors.New("未能获得任何节点信息")
-					initial.Logger.Error("节点信息获取失败",zap.Error(err))
+					Logger.Error("节点信息获取失败",zap.Error(err))
 					close(channel)
 					break
 				}
@@ -167,10 +165,10 @@ func autoNode(tags []string) *simplejson.Json{
 	return auto_node
 }
 
-func MergeOutbounds() []*simplejson.Json{
+func MergeOutbounds(Logger *zap.Logger) []*simplejson.Json{
 	// 首先获得节点信息
-	nodes := getNodes()
-	initial.Logger.Info("节点获取",zap.String("状态","成功"))
+	nodes := getNodes(Logger)
+	Logger.Info("节点获取",zap.String("状态","成功"))
 	// 从节点中获得标签用于生成auto和select出站
 	tags := make([]string,len(nodes))
 	for index,node := range(nodes){

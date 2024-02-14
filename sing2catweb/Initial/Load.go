@@ -19,7 +19,6 @@ func LoadConfig(path string) {
 	viper.ReadInConfig()
 	config,_ := json.Marshal(viper.AllSettings())
 	config_json,_ := simplejson.NewJson(config)
-	
 	SetValue("config",config_json)
 }
 func GetBaseDir(){
