@@ -29,7 +29,7 @@ china标签表示的是这个规则集是国外还是国内,比如谷歌服务�
 
 远程规则集下载时默认走默认生成的select节点,另外为了性能,规则集均采用sing-box官方示例的二进制文件模式,我不希望有人去更改这样的设计,当然你是大佬魔改我的代码我也不能怎么样,反正我的注释也有
 ## 代码运行逻辑&如何添加新的协议
-程序通过读取template.json文件生成配置信息,因此添加新的协议需要在template.json文件中的outbounds添加你新的协议的模板,之后在Merge文件夹下的Protocol.go中FormatNode函数中swicth选择分支中加入新的协议。
+程序通过读取template.yaml文件生成配置信息,因此添加新的协议需要在template.yaml文件中的outbounds添加你新的协议的模板,之后在Merge文件夹下的Protocol.go中FormatNode函数中swicth选择分支中加入新的协议。
 
 template.json中有些模板代码读取之后是不会改变的,你可以随意修改,dns,log,inbounds,experimental都是原封不动抄到新的config.json的。这样做的好处是你可以根据客户端的需要定制你的配置文件,比如一些不支持tun模式的设备你就可以自定义template.json的入站配置适配这种设备。
 ## 关于编译
