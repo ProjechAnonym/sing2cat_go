@@ -3,17 +3,29 @@
 [八音猫功能](https://github.com/ProjechAnonym/sing2cat/blob/main/README.md)
 ## 项目路径配置
 E:\MYPROJECT\DEMO
+
 │  sing2cat_web.exe
+
 │
+
 ├─config
+
 │  └─sing2cat
+
 │          config.yaml
+
 │          template.yaml
-│          
+
+│    
+
 ├─log
+
 │      sing2cat-info.log
-│      
+
+│  
+
 └─temp
+
         config.json
 
 ## 配置文件config.json
