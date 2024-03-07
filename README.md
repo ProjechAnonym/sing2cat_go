@@ -2,6 +2,7 @@
 ## 基本功能
 [八音猫功能](https://github.com/ProjechAnonym/sing2cat/blob/main/README.md)
 ## 项目路径配置
+```
 E:\MYPROJECT\DEMO
 │  sing2cat_web.exe
 │
@@ -15,7 +16,7 @@ E:\MYPROJECT\DEMO
 │  
 └─temp
         config.json
-
+```
 ## 配置文件config.json
 主要是机场链接和规则集链接,支持多个机场链接聚合,根据国家进行分类,国家列表在template.json文件中,请确保未知地区在最后一个!!
 ### 规则集相关
